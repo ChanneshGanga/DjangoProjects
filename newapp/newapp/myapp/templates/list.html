@@ -1,0 +1,136 @@
+<!-- myapp/templates/document_list.html -->
+{% comment %} <h2>Document List</h2>
+{% for document in documents %}
+    <p>{{ document.document }}</p>
+{% endfor %} {% endcomment %}
+
+<!-- document_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous"
+    />
+    <title>Document List</title>
+    <style>
+        /* Split the screen in half */
+        .split {
+            height: 100%;
+            width: 50%;
+            position: fixed;
+            z-index: 1;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        /* Control the left side */
+        .left {
+            left: 0;
+            background: linear-gradient(to left, #ff9966, #ff5e62);
+        }
+
+        /* Control the right side */
+        .right {
+            right: 0;
+            background: linear-gradient(to right, #8ac276, #00874d);
+        }
+    </style>  
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">My App</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/myapp/documents/"
+                >Documents <span class="sr-only"></span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'upload_document' %}">Upload</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">View</a>
+            </li>
+  
+          </ul>  
+        </div>        
+    </nav>
+    
+    <div class = "container split left">
+    <h2 class= "text-uppercase my-3" style="text-align: center; font-family: 'Georgia', serif;">Text Documents</h2>
+    <hr class="border border-primary border-2 opacity-50">
+
+    <div class="row">
+        {% for document in documents %}
+        <div class="col-sm-6 mb-3 mb-sm-0">
+            <div id="documentList" class="card mx-2 my-2">
+              <div class="card-body">
+                <p><b>{{ forloop.counter}}. {{ document.name}}</b></p>
+                <form method="post" action="{% url 'delete' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="document_id" value="{{ document.id }}" />
+                    <a href="{% url 'view_document' document.id %}">View Document</a><button type="submit" style= "position: absolute;
+                    right: 0;  padding: 0px 20px;" class="btn btn-danger mx-5" onclick="return confirmDelete()">Delete</button>
+                </form> 
+              </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div> 
+    </div>
+
+    <div class = "container split right">
+    <h2 class= "text-uppercase my-3" style="text-align: center; font-family: 'Georgia', serif;">PDF Documents</h2>
+    <hr class="border border-primary border-2 opacity-50">
+
+    <div class="row">
+        {% for document in pdfdocuments %}
+        <div class="col-sm-6 mb-3 mb-sm-0">
+            <div id="documentList" class="card mx-2 my-2">
+              <div class="card-body">
+                <p><b>{{ forloop.counter }}. {{ document.title}}</b></p>
+                <form method="post" action="{% url 'delete' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="pdf_id" value="{{ document.id }}" />
+                    <a href="{% url 'view_pdf' document.id %}">View PDF</a><button type="submit" style= "position: absolute;
+                    right: 0;  padding: 0px 20px;" class="btn btn-danger mx-5" onclick="return confirmDelete()">Delete</button>
+                </form> 
+              </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>  
+
+
+<script>
+    function confirmDelete() {
+        return confirm('Are you sure you want to delete this document?');
+    }
+</script>
+</body>
+</html>
+

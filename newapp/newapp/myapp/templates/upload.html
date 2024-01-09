@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous"
+    />
+    <title>Upload a Text Document</title>
+    <style>
+        {% comment %} .bg-color {
+            /* Linear gradient transitioning between two gradients */
+            background: linear-gradient(
+                to bottom, 
+                #ff5e62 0%,  /* Start of the first gradient */
+                #ff9966 50%, /* End of the first gradient and start of the transition */
+                #8ac276 50%, /* Start of the second gradient and end of the transition */
+                #00874d 100% /* End of the second gradient */
+            );
+            height: 100%; 
+        }     {% endcomment %}
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">My App</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item ">
+              <a class="nav-link" href="/myapp/documents/"
+                >Documents <span class="sr-only"></span></a
+              >
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'upload_document' %}">Upload</a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link" href"#">View</a>
+            </li>
+  
+          </ul>        
+    </nav>
+    <div class="bg-color">
+    <div class="container">
+        <h2 class= "text-uppercase my-3" style="font-family: 'Georgia', serif;">Upload a Text Document</h2>
+        <hr class="border border-primary border-2 opacity-50">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="my-2">
+            <label for="document">Select a file:</label>
+            <input type="file" accept=".txt" id="document" name="document">
+        </div>
+        <div class="my-2">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name">
+        </div>
+        <div >
+            <button class=" btn btn-primary my-2"type="submit">Upload</button>
+        </div>
+    </form>
+    </div> 
+    <br>
+    <div class="container">
+        <h2 class= "text-uppercase my-3" style="font-family: 'Georgia', serif;">Upload a Pdf Document</h2>
+        <hr class="border border-primary border-2 opacity-50">
+         <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="my-2">
+                <label for="pdfdocument">Select a file:</label>
+                <input type="file" accept=".pdf" id="pdfdocument" name="pdfdocument">
+            </div>
+            <div class="my-2">
+                <label for="pdfname">Title:</label>
+                <input type="text" id="pdfname" name="pdfname">
+            </div>
+            <div >
+                <button class=" btn btn-primary my-2"type="submit">Upload</button>
+            </div>
+        </form> 
+    </div>
+    <br>
+    </div>
+</body>
+</html>

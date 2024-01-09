@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <title>PDF Document</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous"
+    />
+    <style>
+        canvas {
+           display: block;
+           margin: 0 auto;
+           width: 85%;
+        }
+        
+    </style>    
+    <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>   
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.6/fabric.min.js"></script>
+</head>
+
+<body style="height: 100vh; margin: 0;">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">My App</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item ">
+              <a class="nav-link" href="/myapp/documents/"
+                >Documents <span class="sr-only"></span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'upload_document' %}">Upload</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="#">View</a>
+            </li>
+  
+          </ul>  
+        </div>        
+    </nav>
+
+
+    <h1 class= "text-uppercase my-3" style="text-align: center; font-family: 'Georgia', serif;" >{{pdf.title}}</h1>
+
+    <div style="width: 100%; height: 100%;" id="pdf-container"></div>
+
+<script type="module">
+        import "{% static 'myapp/pspdfkit/pspdfkit.js' %}";
+        const baseUrl = `${window.location.protocol}//${window.location.host}` + "{% static 'myapp/pspdfkit/' %}";
+        const pdf_id = "{{ pdf.id }}"
+        // console.log('pdfid', pdf_id);
+        let instance;
+        const saveButton = {
+	    type: "custom",
+        id: "save-pdf",
+	    title: "Save",
+	    onPress: () => {
+		instance.exportPDF().then(async (buffer) => {
+			const arrayBuffer = await instance.exportPDF();
+            const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+            console.log('blob', blob);
+            const formData = new FormData();
+            formData.append("pdf", blob);
+            formData.append("title", "{{ pdf.title }}");
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            // console.log('formdata', formData.get('file'));
+            console.log('Sending update request');
+            await fetch(`/myapp/update_pdf_file/${pdf_id}/`, {
+	            method: "POST",
+	            body: formData,
+                headers: {
+                    // 'X-CSRFToken': '{{ csrf_token }}',  // Include the CSRF token
+                    // 'Content-Type': "multipart/form-data" 
+                },
+            });
+            console.log('Pdf updated');
+		});
+	    }
+        };
+
+        const items = PSPDFKit.defaultToolbarItems;
+        // Add the download button to the toolbar.
+        items.push(saveButton);
+
+        PSPDFKit.load({
+            baseUrl,
+            toolbarItems: [
+                ...items,
+                { type: "content-editor" }
+            ],
+            disableWebAssemblyStreaming: true,
+            container: "#pdf-container",
+            document: "{{ pdf.pdf.url }}",  // Replace with the path to your PDF file
+        }).then((_instance) => {
+		instance = _instance;
+	    });
+    </script>
+    <!-- // const { degrees, PDFDocument, rgb, StandardFonts } = PDFLib
+    // // let pdfDoc;
+
+    // const canvas = new fabric.Canvas('pdfViewerDiv');
+    // var csrf_token = "{{ csrf_token }}";
+    // let pdfDoc; -->
+
+    <!-- initPDFViewer = () => {
+    $("#pdfViewerDiv").html("")
+    pdfjsLib.getDocument("{{pdf.pdf.url}}").promise.then(pdfDoc=>{
+    console.log(pdfDoc)
+    let pages = pdfDoc._pdfInfo.numPages
+    for (let i = 1; i <= pages; i++) {
+        pdfDoc.getPage(i).then(page => {
+            console.log(page)
+            let pdfCanvas = document.createElement("canvas")
+            let context = pdfCanvas.getContext("2d")
+            let pageViewPort = page.getViewport({ scale: 2 })
+            console.log(pageViewPort)
+            pdfCanvas.width = pageViewPort.width
+            pdfCanvas.height = pageViewPort.height
+            $("#pdfViewerDiv").append(pdfCanvas)
+            page.render({
+                canvasContext: context,
+                viewport: pageViewPort
+            })
+        }).catch(pageErr=>{
+            console.log(pageErr)
+        })
+    }
+}).catch(pdfErr=>{
+    console.log(pdfErr)
+})
+} -->
+<!-- $(function(){
+    initPDFViewer()
+}) -->
+
+</body>
+
+</html>
