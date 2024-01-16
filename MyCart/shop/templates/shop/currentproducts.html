@@ -49,7 +49,6 @@ padding-right: 0;
                             <form method="post" action="{% url 'DeleteProduct' %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="product_id" value="{{ product.id }}" />
-                                {% comment %} <a href="/shop/editproduct/{{product.id}}">Edit Product</a> {% endcomment %}
                                 <button type="submit" class="btn btn-danger" onclick="return confirmDelete()">Delete Product</button>
                             </form> 
                         </div>

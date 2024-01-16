@@ -22,7 +22,6 @@ class Contact(models.Model):
     phone = models.CharField(max_length=70, default="")
     desc = models.CharField(max_length=500, default="")
 
-
     def __str__(self):
         return self.name
 
@@ -48,5 +47,4 @@ class OrderUpdate(models.Model):
     timestamp = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        # return self.update_desc[0:7] + "..."
         return str(self.order_id) + " - " + self.update_desc

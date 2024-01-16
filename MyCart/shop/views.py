@@ -4,10 +4,9 @@ from math import ceil
 import json
 from .forms import ProductForm
 from django.contrib import messages
-
-# Create your views here.
 from django.http import HttpResponse
 
+# Create your views here.
 
 def index(request):
     allProds = []
@@ -21,10 +20,8 @@ def index(request):
     params = {'allProds':allProds}
     return render(request, 'shop/index.html', params)
 
-
 def about(request):
     return render(request, 'shop/about.html')
-
 
 def contact(request):
     if request.method=="POST":
@@ -129,14 +126,11 @@ def search(request):
         params = {'msg': "Please make sure to enter relevant search query to get actual results"}
     return render(request, 'shop/search.html', params)
 
-
-
 def productView(request, myid):
 
     # Fetch the product using the id
     product = Product.objects.filter(id=myid)
     return render(request, 'shop/prodView.html', {'product':product[0]})
-
 
 def checkout(request):
     if request.method=="POST":
