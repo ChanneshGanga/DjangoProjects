@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .models import Product, Contact, Orders, OrderUpdate
 from math import ceil
 import json
+from .forms import ProductForm
+from django.contrib import messages
 
 # Create your views here.
 from django.http import HttpResponse
@@ -37,6 +39,50 @@ def contact(request):
         return render(request, 'shop/contact.html', {'thank':thank, 'name':name})
     return render(request, 'shop/contact.html')
 
+def product(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            thank = True
+
+        return render(request,'shop/product.html', {'thank':thank})
+
+    else:
+        print("error")
+
+    return render(request,'shop/product.html')
+
+def currentproducts(request):
+    products = Product.objects.all()
+    return render(request, 'shop/currentproducts.html', {'products': products})
+
+def editproduct(request, myid):
+    # Fetch the product using the id
+    product = Product.objects.get(id=myid)
+    form = ProductForm(instance=product)
+    if request.method == "POST":
+        form = ProductForm(request.POST,request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('/shop/currentproducts')
+
+    return render(request, 'shop/editproduct.html', {'product':product})
+
+def deleteproduct(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+
+        try:
+            if product_id:
+                product = Product.objects.get(id=product_id)
+                product.delete()
+                messages.success(request, 'Text document deleted successfully')
+                return redirect('/shop/currentproducts')
+        except (Product.DoesNotExist):
+            messages.error(request, 'Failed to delete the document')
+
+    return render(request, '/shop/currentproducts')
 
 def tracker(request):
     if request.method=="POST":
